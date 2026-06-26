@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Svatební salon — DEMO s AI stylistkou</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blush:#F6EDE9; --ivory:#FBF8F5; --sage:#8A9A82; --sage-deep:#5F6F58;
+    --ink:#2E2A27; --muted:#8C837C; --champagne:#C2A06B; --line:#E8DDD5;
+    --shadow:0 18px 50px -22px rgba(72,58,48,.35);
+    --serif:"Cormorant Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--blush);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  .ribbon{background:var(--sage-deep);color:#fff;text-align:center;font-size:13px;letter-spacing:.04em;padding:7px 16px}
+  .ribbon b{font-weight:600}
+
+  header.site{position:sticky;top:0;z-index:30;background:rgba(251,248,245,.86);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .navrow{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:.01em}
+  .brand span{color:var(--sage-deep)}
+  nav.menu{display:flex;gap:26px;font-size:14.5px;color:var(--muted)}
+  nav.menu a:hover{color:var(--ink)}
+  .navcta{border:1px solid var(--sage-deep);color:var(--sage-deep);padding:9px 16px;border-radius:999px;font-size:13.5px;font-weight:500;transition:.18s}
+  .navcta:hover{background:var(--sage-deep);color:#fff}
+  @media(max-width:760px){nav.menu{display:none}}
+
+  .hero{position:relative;overflow:hidden}
+  .hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:70px 0 60px}
+  .eyebrow{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--champagne);font-weight:600;margin-bottom:18px}
+  .hero h1{font-family:var(--serif);font-weight:500;font-size:clamp(40px,6vw,62px);line-height:1.04;margin:0 0 20px;letter-spacing:.005em}
+  .hero h1 em{font-style:italic;color:var(--sage-deep)}
+  .hero p.lead{font-size:18px;color:#5b524b;max-width:30em;margin:0 0 30px}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .btn-primary{background:var(--sage-deep);color:#fff;padding:14px 26px;border-radius:999px;font-weight:500;font-size:15px;border:none;cursor:pointer;transition:.18s;box-shadow:var(--shadow)}
+  .btn-primary:hover{background:#51604b;transform:translateY(-1px)}
+  .ask-hint{font-size:14.5px;color:var(--muted);cursor:pointer;border-bottom:1px dashed var(--line);padding-bottom:2px}
+  .ask-hint:hover{color:var(--sage-deep)}
+  .usp{display:flex;gap:22px;flex-wrap:wrap;margin-top:34px;font-size:13.5px;color:#6a615a}
+  .usp span{display:flex;align-items:center;gap:7px}
+  .usp i{width:6px;height:6px;border-radius:50%;background:var(--champagne);display:inline-block}
+
+  .hero-art{position:relative;aspect-ratio:4/5;border-radius:200px 200px 22px 22px;background:
+     radial-gradient(120% 90% at 50% 0%, #fff 0%, var(--ivory) 45%, #efe2db 100%);
+     border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;box-shadow:var(--shadow)}
+  .hero-art svg{width:74%;height:auto;margin-bottom:-1px}
+  @media(max-width:860px){.hero-inner{grid-template-columns:1fr;gap:30px}.hero-art{max-width:360px;justify-self:center}}
+
+  section{padding:64px 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:34px;gap:16px;flex-wrap:wrap}
+  .sec-head h2{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,40px);margin:0;letter-spacing:.01em}
+  .sec-head p{color:var(--muted);font-size:15px;margin:0}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:540px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--ivory);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.2s;display:flex;flex-direction:column}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .card .pic{aspect-ratio:3/4;display:flex;align-items:flex-end;justify-content:center;position:relative}
+  .card .pic svg{width:62%;margin-bottom:-1px}
+  .tag{position:absolute;top:12px;left:12px;background:rgba(251,248,245,.9);border:1px solid var(--line);color:var(--sage-deep);font-size:11.5px;font-weight:600;letter-spacing:.03em;padding:4px 10px;border-radius:999px}
+  .sale{position:absolute;top:12px;right:12px;background:var(--champagne);color:#fff;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px}
+  .card .body{padding:16px 18px 20px;border-top:1px solid var(--line)}
+  .card h3{font-family:var(--serif);font-size:23px;font-weight:600;margin:0 0 3px}
+  .card .meta{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+  .card .price{font-size:16px;font-weight:600}
+  .card .price s{color:var(--muted);font-weight:400;font-size:13.5px;margin-left:6px}
+  .stock{font-size:12px;color:var(--sage-deep);margin-top:2px}
+
+  .salons{background:var(--ivory);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .salonrow{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  @media(max-width:680px){.salonrow{grid-template-columns:1fr}}
+  .salon{text-align:center;padding:14px}
+  .salon .city{font-family:var(--serif);font-size:26px;font-weight:600}
+  .salon .note{font-size:13px;color:var(--muted);margin-top:2px}
+
+  footer.site{padding:40px 0;color:var(--muted);font-size:13.5px;text-align:center}
+  footer.site .fbrand{font-family:var(--serif);font-size:22px;color:var(--ink);margin-bottom:6px}
+
+  /* ---- Chat ---- */
+  .chat-fab{position:fixed;right:22px;bottom:22px;z-index:50;display:flex;align-items:center;gap:10px;background:var(--sage-deep);color:#fff;border:none;cursor:pointer;
+     padding:13px 20px 13px 16px;border-radius:999px;box-shadow:0 16px 40px -12px rgba(72,58,48,.55);font-family:var(--sans);font-size:15px;font-weight:500;transition:.2s}
+  .chat-fab:hover{transform:translateY(-2px)}
+  .chat-fab .dot{width:9px;height:9px;border-radius:50%;background:#bfe3b0;box-shadow:0 0 0 0 rgba(191,227,176,.7)}
+  @media(prefers-reduced-motion:no-preference){.chat-fab .dot{animation:pulse 2.4s infinite}}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(191,227,176,.6)}70%{box-shadow:0 0 0 10px rgba(191,227,176,0)}100%{box-shadow:0 0 0 0 rgba(191,227,176,0)}}
+
+  .chat-panel{position:fixed;right:22px;bottom:22px;z-index:60;width:380px;max-width:calc(100vw - 28px);height:560px;max-height:calc(100vh - 40px);
+     background:var(--ivory);border:1px solid var(--line);border-radius:22px;box-shadow:0 30px 70px -20px rgba(60,46,38,.55);
+     display:none;flex-direction:column;overflow:hidden}
+  .chat-panel.open{display:flex}
+  .chat-head{background:var(--sage-deep);color:#fff;padding:15px 18px;display:flex;align-items:center;gap:12px}
+  .avatar{width:40px;height:40px;border-radius:50%;background:#fff;flex:none;display:flex;align-items:center;justify-content:center}
+  .avatar svg{width:24px;height:24px}
+  .chat-head .who{flex:1;line-height:1.25}
+  .chat-head .who b{font-family:var(--serif);font-size:19px;font-weight:600}
+  .chat-head .who small{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.92}
+  .chat-head .who small::before{content:"";width:7px;height:7px;border-radius:50%;background:#bfe3b0}
+  .chat-x{background:transparent;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;opacity:.85;padding:4px}
+  .chat-x:hover{opacity:1}
+
+  .chat-log{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;background:
+     linear-gradient(180deg,#fff 0%, var(--ivory) 120px)}
+  .msg{max-width:84%;padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.5;white-space:pre-wrap}
+  .msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start}
+  .msg.me{background:var(--sage-deep);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+  .msg.bot b{color:var(--sage-deep)}
+  .typing{align-self:flex-start;background:#fff;border:1px solid var(--line);border-radius:16px;border-bottom-left-radius:5px;padding:12px 14px;display:none}
+  .typing.show{display:block}
+  .typing span{display:inline-block;width:7px;height:7px;margin:0 1px;border-radius:50%;background:#c7bcb3;animation:blink 1.3s infinite both}
+  .typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 10px}
+  .chip{background:transparent;border:1px solid var(--sage);color:var(--sage-deep);font-size:12.5px;padding:7px 12px;border-radius:999px;cursor:pointer;transition:.15s;font-family:var(--sans)}
+  .chip:hover{background:var(--sage);color:#fff}
+
+  .composer{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--ivory)}
+  .composer input{flex:1;border:1px solid var(--line);background:#fff;border-radius:999px;padding:11px 16px;font-size:14.5px;font-family:var(--sans);color:var(--ink);outline:none}
+  .composer input:focus{border-color:var(--sage)}
+  .composer button{background:var(--sage-deep);border:none;color:#fff;width:42px;height:42px;border-radius:50%;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .composer button:hover{background:#51604b}
+  .composer button:disabled{opacity:.5;cursor:default}
+  .chat-foot{font-size:10.5px;color:var(--muted);text-align:center;padding:0 0 9px;background:var(--ivory)}
+
+  :focus-visible{outline:2px solid var(--sage-deep);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="ribbon"><b>UKÁZKA / DEMO</b> &nbsp;·&nbsp; AI stylistka pro svatební e-shop &nbsp;·&nbsp; klikněte vpravo dole na <b>Stylistka</b></div>
+
+<header class="site">
+  <div class="wrap navrow">
+    <div class="brand">Bílá&nbsp;<span>krajka</span></div>
+    <nav class="menu">
+      <a href="#saty">Svatební šaty</a>
+      <a href="#salony">Salony</a>
+      <a href="#saty">Doplňky</a>
+      <a href="#salony">Náš příběh</a>
+    </nav>
+    <a class="navcta" href="#salony">Rezervovat zkoušku</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow">Vlastní kolekce 2026</div>
+      <h1>Šaty, ve kterých <em>si řeknete ano</em> — a odnesete domů.</h1>
+      <p class="lead">Boho, minimalistické, pro plnoštíhlé i těhotenské. Šaty prodáváme, nepůjčujeme. Osobní zkouška se stylistkou v Praze, Brně i Pardubicích.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('salony').scrollIntoView()">Rezervovat zkoušku</button>
+        <span class="ask-hint" onclick="openChat()">Nevíte, kde začít? Zeptejte se stylistky →</span>
+      </div>
+      <div class="usp">
+        <span><i></i>Doprava zdarma</span>
+        <span><i></i>Vrácení zdarma</span>
+        <span><i></i>Velikosti 34–54</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <svg viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 28c-9 0-16 7-16 16 0 6 3 11 8 14l-14 10 10 8-18 140h80l-18-140 10-8-14-10c5-3 8-8 8-14 0-9-7-16-16-16z" fill="#fff" stroke="#d9cbc2" stroke-width="1.4"/>
+        <path d="M70 226c8-66 14-110 14-110M130 226c-8-66-14-110-14-110" stroke="#e3d6cd" stroke-width="1.2"/>
+        <path d="M84 46c5 4 27 4 32 0" stroke="#d9cbc2" stroke-width="1.2"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="saty">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Nepřehlédněte</h2>
+      <p>Vybrané modely skladem · poradíme s velikostí i stylem</p>
+    </div>
+    <div class="grid" id="productGrid"></div>
+  </div>
+</section>
+
+<section class="salons" id="salony">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Přijďte si je vyzkoušet</h2>
+      <p>Soukromá zkouška, vlastní stylistka — jen pro vás</p>
+    </div>
+    <div class="salonrow">
+      <div class="salon"><div class="city">Praha</div><div class="note">po–so, na rezervaci</div></div>
+      <div class="salon"><div class="city">Brno</div><div class="note">po–so, na rezervaci</div></div>
+      <div class="salon"><div class="city">Pardubice</div><div class="note">po–so, na rezervaci</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="fbrand">Bílá krajka</div>
+    Ukázkový e-shop pro prezentaci AI asistentky · není skutečný obchod
+  </div>
+</footer>
+
+<!-- Chat -->
+<button class="chat-fab" id="chatFab" onclick="openChat()" aria-label="Otevřít chat se stylistkou">
+  <span class="dot"></span> Stylistka
+</button>
+
+<div class="chat-panel" id="chatPanel" role="dialog" aria-label="Chat se stylistkou">
+  <div class="chat-head">
+    <div class="avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="3.6" fill="#8A9A82"/><path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#8A9A82" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </div>
+    <div class="who"><b>Klára</b><small>vaše svatební stylistka</small></div>
+    <button class="chat-x" onclick="closeChat()" aria-label="Zavřít chat">×</button>
+  </div>
+
+  <div class="chat-log" id="chatLog">
+    <div class="msg bot">Dobrý den, jsem Klára 🌿 Pomůžu vám vybrat svatební šaty, poradím s velikostí nebo vás objednám na zkoušku v Praze, Brně či Pardubicích. S čím můžu pomoct?</div>
+  </div>
+  <div class="typing" id="typing" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <div class="chips" id="chips">
+    <button class="chip" onclick="quick('Poradíte mi s velikostí?')">Poradit s velikostí</button>
+    <button class="chip" onclick="quick('Hledám boho šaty do 6 000 Kč')">Boho do 6 000 Kč</button>
+    <button class="chip" onclick="quick('Chci se objednat na zkoušku v Brně')">Rezervovat v Brně</button>
+  </div>
+
+  <div class="composer">
+    <input id="chatInput" type="text" placeholder="Napište zprávu…" autocomplete="off"
+       aria-label="Napište zprávu stylistce" onkeydown="if(event.key==='Enter')send()">
+    <button id="sendBtn" onclick="send()" aria-label="Odeslat">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z" fill="#fff"/></svg>
+    </button>
+  </div>
+  <div class="chat-foot">Demo · poháněno AI</div>
+</div>
+
+<script>
+/* ---------- Sample catalogue (mirrors the real shop's style & price range) ---------- */
+const DRESSES = [
+  {name:"Elsa",    style:"Boho",            price:8800, old:9100, sizes:"34–46", note:"vzdušná krajka, odhalená záda"},
+  {name:"Sylvie",  style:"Minimalistické", price:8000, old:8600, sizes:"34–44", note:"hladký satén, čisté linie"},
+  {name:"Valentýna",style:"Pro plnoštíhlé", price:9100, old:null, sizes:"42–54", note:"zpevněný střih, krajkové rukávy"},
+  {name:"Elena",   style:"Těhotenské",     price:8000, old:null, sizes:"36–46", note:"volný pas, příjemný materiál"},
+  {name:"Bella",   style:"Boho",            price:4900, old:8700, sizes:"34–42", note:"lehký tyl, výprodej"},
+  {name:"Karolína",style:"Minimalistické", price:4500, old:8700, sizes:"36–46", note:"saténové ramínko, výprodej"}
+];
+
+const DRESS_SVG = `<svg viewBox="0 0 120 160" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M60 14c-6 0-10 4-10 10 0 4 2 7 5 9l-9 6 6 5-12 97h60l-12-97 6-5-9-6c3-2 5-5 5-9 0-6-4-10-10-10z" fill="#fff" stroke="#dccfc6" stroke-width="1.2"/><path d="M42 146c5-44 9-74 9-74M78 146c-5-44-9-74-9-74" stroke="#e6dad1" stroke-width="1"/></svg>`;
+
+function fmt(n){return n.toLocaleString('cs-CZ').replace(/,/g,' ')+" Kč";}
+
+document.getElementById('productGrid').innerHTML = DRESSES.map(d=>`
+  <div class="card">
+    <div class="pic">
+      <span class="tag">${d.style}</span>
+      ${d.old?`<span class="sale">Akce</span>`:``}
+      ${DRESS_SVG}
+    </div>
+    <div class="body">
+      <h3>${d.name}</h3>
+      <div class="meta">vel. ${d.sizes} · ${d.note}</div>
+      <div class="price">${fmt(d.price)}${d.old?`<s>${fmt(d.old)}</s>`:``}</div>
+      <div class="stock">● Skladem</div>
+    </div>
+  </div>`).join('');
+
+/* ---------- Chat ---------- */
+const panel=document.getElementById('chatPanel'), fab=document.getElementById('chatFab'),
+      log=document.getElementById('chatLog'), input=document.getElementById('chatInput'),
+      sendBtn=document.getElementById('sendBtn'), typing=document.getElementById('typing'),
+      chips=document.getElementById('chips');
+let chatHistory=[];   // used only for the optional live-AI mode
+let busy=false;
+/* Replies come from the built-in engine below: instant and works on any host (incl. once you upload it).
+   To try real Claude inside the Claude preview instead, set USE_LIVE_AI = true. */
+const USE_LIVE_AI=false;
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+
+function openChat(){panel.classList.add('open');fab.style.display='none';setTimeout(()=>input.focus(),120);}
+function closeChat(){panel.classList.remove('open');fab.style.display='flex';}
+function scrollDown(){log.scrollTop=log.scrollHeight;}
+
+function addMsg(text,who){
+  const d=document.createElement('div');
+  d.className='msg '+who;
+  d.innerHTML=text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
+  log.insertBefore(d,typing);
+  scrollDown();
+}
+function quick(t){input.value=t;send();}
+
+async function send(){
+  const text=input.value.trim();
+  if(!text||busy)return;
+  chips.style.display='none';
+  addMsg(text,'me');
+  input.value='';
+  busy=true;sendBtn.disabled=true;typing.classList.add('show');scrollDown();
+
+  let reply='';
+  if(USE_LIVE_AI){
+    chatHistory.push({role:'user',content:text});
+    try{ reply=await callClaude(chatHistory); }catch(e){ reply=''; }
+    if(reply) chatHistory.push({role:'assistant',content:reply});
+  }
+  if(!reply){
+    await wait(450+Math.random()*450);   // brief, natural typing pause
+    reply=fallbackReply(text);
+  }
+
+  typing.classList.remove('show');
+  addMsg(reply,'bot');
+  busy=false;sendBtn.disabled=false;input.focus();
+}
+
+/* ----- Live Claude (works in the artifact preview); falls back offline ----- */
+const SYSTEM = `Jsi Klára, milá a profesionální svatební stylistka e-shopu „Bílá krajka". Pomáháš nevěstám přímo na webu. Piš česky, vřele a stručně (2–5 vět), vykej. Nepoužívej odrážky, piš přirozeně.
+
+Co o salonu platí:
+- Svatební šaty PRODÁVÁME, nepůjčujeme.
+- Doprava i vrácení jsou ZDARMA.
+- Osobní zkouška se stylistkou je v salonech: Praha, Brno, Pardubice (po–so, na rezervaci). Kdykoli se to hodí, navrhni rezervaci zkoušky v nejbližším salonu a zeptej se, které město je pro nevěstu nejblíž.
+- Pomoc s velikostí: poradíš změřit obvod hrudníku, pasu a boků a podle toho doporučíš velikost; nabídka je ve velikostech 34–54.
+- Doplňky: závoje, spodničky, svatební tenisky.
+
+Aktuální nabídka šatů (jméno – styl – cena – velikosti – popis):
+${DRESSES.map(d=>`- ${d.name} – ${d.style} – ${d.price} Kč${d.old?` (sleva z ${d.old} Kč)`:''} – vel. ${d.sizes} – ${d.note}`).join('\n')}
+
+Tvůj úkol: poradit s výběrem podle stylu, rozpočtu a velikosti, pomoct s velikostí a navést k rezervaci zkoušky. Když se hodí, doporuč 1–3 konkrétní modely z nabídky a uveď jejich cenu. Na dotazy mimo svatební salon zdvořile odkaž zpět k šatům a zkoušce.`;
+
+async function callClaude(messages){
+  const ctrl=new AbortController();
+  const timer=setTimeout(()=>ctrl.abort(),6000);   // hard timeout so it can never hang
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,system:SYSTEM,messages:messages}),
+      signal:ctrl.signal
+    });
+    if(!res.ok) throw new Error("api "+res.status);
+    const data=await res.json();
+    const txt=(data.content||[]).filter(b=>b.type==="text").map(b=>b.text).join("\n").trim();
+    if(!txt) throw new Error("empty");
+    return txt;
+  } finally { clearTimeout(timer); }
+}
+
+/* ----- Offline fallback so the demo never breaks on any laptop ----- */
+function norm(s){return s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function recommend(filterFn,intro){
+  const m=DRESSES.filter(filterFn);
+  if(!m.length) return null;
+  const list=m.slice(0,3).map(d=>`**${d.name}** (${d.style}, ${fmt(d.price)}, vel. ${d.sizes})`).join(', ');
+  return `${intro} Doporučila bych ${list}. Chcete si některé vyzkoušet osobně? Ráda vás objednám na zkoušku v Praze, Brně nebo Pardubicích.`;
+}
+function fallbackReply(raw){
+  const t=norm(raw);
+  const num=(raw.match(/(\d[\d\s]{2,})/)||[])[0];
+  const budget=num?parseInt(num.replace(/\s/g,''),10):null;
+
+  if(/(ahoj|dobry den|zdrav|cau|dobry vecer)/.test(t))
+    return "Dobrý den! Ráda vám pomůžu s výběrem svatebních šatů, velikostí i rezervací zkoušky. Hledáte spíš boho, minimalistické, nebo máte konkrétní představu?";
+
+  if(budget && budget>=1000 && budget<=20000){
+    const style=/boho/.test(t)?"Boho":/minimal/.test(t)?"Minimalistické":/(plnostihl|baculk|plus)/.test(t)?"Pro plnoštíhlé":/tehot/.test(t)?"Těhotenské":null;
+    const r=recommend(d=>d.price<=budget && (!style||d.style===style), `V rozpočtu do ${fmt(budget)}${style?` ve stylu ${style.toLowerCase()}`:''} pro vás mám hezké kousky.`);
+    return r||`V rozpočtu do ${fmt(budget)} se právě hodí naše výprodejové modely. Chcete je poslat, nebo rovnou rezervovat zkoušku?`;
+  }
+
+  if(/(velikost|miry|zmer|cisl|sedne|padne|kolik mam)/.test(t))
+    return "Ráda poradím s velikostí. Stačí změřit tři míry — obvod hrudníku, pasu a boků — a podle nich vám doporučím velikost (máme 34–54). Jaké míry máte? Nebo můžete přijít na zkoušku a vyzkoušet si víc velikostí najednou.";
+
+  if(/boho/.test(t)) return recommend(d=>d.style==="Boho","Boho šaty máme moc pěkné —")||"Boho modely máme skladem, ráda vám je ukážu.";
+  if(/minimal/.test(t)) return recommend(d=>d.style==="Minimalistické","Minimalistické šaty s čistými liniemi —")||"Minimalistické modely máme skladem.";
+  if(/(plnostihl|baculk|plus|vetsi velik)/.test(t)) return recommend(d=>d.style==="Pro plnoštíhlé","Pro plnoštíhlé máme střihy, které krásně sednou —")||"Modely pro plnoštíhlé máme ve velikostech až do 54.";
+  if(/tehot/.test(t)) return recommend(d=>d.style==="Těhotenské","Pro nastávající maminky máme pohodlné modely —")||"Těhotenské svatební šaty máme s volnějším pasem.";
+
+  if(/(rezerv|zkous|salon|praha|brno|pardubic|prijit|schuz|objednat se)/.test(t)){
+    let city=/praha/.test(t)?"Praze":/brno/.test(t)?"Brně":/pardubic/.test(t)?"Pardubicích":null;
+    return city
+      ? `Skvělá volba — zkoušku v ${city} si můžete rezervovat na konkrétní termín a budete mít stylistku jen pro sebe. Napíšete mi jméno, telefon a termín, který by vám vyhovoval?`
+      : "Zkoušku si můžete rezervovat v Praze, Brně nebo Pardubicích — soukromě a se stylistkou jen pro vás. Které město je vám nejblíž?";
+  }
+
+  if(/(pujc|prodej|prodava|vlastni|koupit)/.test(t))
+    return "Šaty u nás prodáváme, nepůjčujeme — odnesete si je domů a zůstanou vám. A doprava i případné vrácení jsou zdarma. Chcete poradit s výběrem?";
+  if(/(doprav|posli|zaslan|vraceni|vratit|reklamac)/.test(t))
+    return "Doprava i vrácení jsou u nás zdarma, takže nákup je bez rizika. Mám vám doporučit pár modelů, nebo rovnou rezervovat zkoušku?";
+  if(/(diky|dekuj|super|paradni)/.test(t))
+    return "Ráda jsem pomohla 🌿 Kdybyste si chtěla šaty vyzkoušet, stačí říct a objednám vás na zkoušku. Přeju krásný den!";
+
+  return "Ráda vám pomůžu — poradím s výběrem podle stylu a rozpočtu, s velikostí, nebo vás objednám na zkoušku v Praze, Brně či Pardubicích. Co byste potřebovala nejdřív?";
+}
+</script>
+</body>
+</html>
